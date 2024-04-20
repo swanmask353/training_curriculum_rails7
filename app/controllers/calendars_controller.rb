@@ -15,7 +15,7 @@ class CalendarsController < ApplicationController
   private
 
   def plan_params
-    params.require(:calendars).permit(:plan)
+    params.require(:plan).permit(:plan,:date)
   end
 
   def getWeek
@@ -34,15 +34,18 @@ class CalendarsController < ApplicationController
       plans.each do |plan|
         today_plans.push(plan.plan) if plan.date == @todays_date + x
       end
-
-      wday_num = wdays # wdayメソッドを用いて取得した数値
-      if wday_num = > 7  #「wday_numが7以上の場合」という条件式
+      
+      wday_num = (@todays_date + x).wday
+              #  = @todays_date.wday + x
+      if wday_num >= 7
         wday_num = wday_num -7
       end
+       # 曜日の文字列を取得して追加
+        wday_str = wdays[wday_num]
 
-      days = { :month => (@todays_date + x).month, :date => (@todays_date+x).day, :plans => today_plans, :wday => wdays[(todays_date + x).wday}
+      days = { :month => (@todays_date + x).month, :date => (@todays_date + x).day, :plans => today_plans, :wday => wday_str }
       @week_days.push(days)
     end
-
   end
+  
 end
